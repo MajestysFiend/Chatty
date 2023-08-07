@@ -4,7 +4,7 @@ A chat app for mobile devices built using React Native. The app will
 provide users with a chat interface and options to share images and their
 location.
 
-## Dependancies
+## Dependencies
 - "@react-navigation/native": "^6.1.7",
 - "@react-navigation/native-stack": "^6.9.13",
 - "expo": "~49.0.5",
@@ -15,7 +15,7 @@ location.
 - "react-native-safe-area-context": "4.6.3"
 
 ## Development Dependencies
--"@babel/core": "^7.20.0"
+- "@babel/core": "^7.20.0"
 
 ## Credits
 
