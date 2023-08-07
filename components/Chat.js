@@ -58,7 +58,7 @@ const Chat = ({ route, navigation }) => {
 
     return (
         <View style={[styles.container, { backgroundColor: bgColor }]}>
-            <Text style={{ color: '#FFF', fontSize: 20, textAlign: 'center' }}>Hello, {name}!</Text>
+            <Text style={{ color: '#FFF', fontSize: 20, textAlign: 'center', marginTop: 15 }}>Hello, {name}!</Text>
             <GiftedChat
                 messages={messages}
                 renderBubble={renderBubble}
