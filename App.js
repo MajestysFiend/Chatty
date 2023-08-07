@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet} from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+// Creates the navigator
 const Stack = createNativeStackNavigator();
 
 const App = () => {

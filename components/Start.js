@@ -13,7 +13,7 @@ const Start = ({ navigation }) => {
                 source={require('../assets/backgroundImage.png')}>
                 <Text style={{
                     fontSize: 60, marginTop: 50, textAlign: 'center', color: '#FFF', fontWeight: 600
-                }}>App Title</Text>
+                }}>Chatty</Text>
                 <View style={{ flex: 1, justifyContent: 'flex-end', padding: 15 }}>
                     <View style={styles.container}>
                         <TextInput
