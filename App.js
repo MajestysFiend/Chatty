@@ -1,10 +1,12 @@
-import { StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import Start from './components/Start';
 import Chat from './components/Chat';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
-import { initializeFirestore } from "firebase/firestore";
+import { initializeFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
+import { useEffect } from 'react';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 // Creates the navigator
 const Stack = createNativeStackNavigator();
@@ -25,19 +27,30 @@ const App = () => {
     experimentalForceLongPolling: true
   });
 
+  const connectionStatus = useNetInfo();
+
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!")
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
+
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Start"
       >
         <Stack.Screen
-          name="Start"
-          component={Start}
-        />
+          name="Start">
+          {props => <Start isConnected={connectionStatus.isConnected} {...props} />}
+        </Stack.Screen>
         <Stack.Screen
           name="Chat">
-          {props => <Chat db={db} {...props}/>}
-          </Stack.Screen>
+          {props => <Chat db={db} {...props} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

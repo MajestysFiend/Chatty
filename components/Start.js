@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { StyleSheet, ImageBackground, View, Text, TouchableOpacity, TextInput, Alert } from 'react-native';
 
-const Start = ({ navigation }) => {
+const Start = ({ navigation, isConnected }) => {
     const auth = getAuth();
 
     const [name, setName] = useState();
@@ -11,8 +11,21 @@ const Start = ({ navigation }) => {
     const signInUser = () => {
         signInAnonymously(auth)
             .then(result => {
-                navigation.navigate("Chat", { userID: result.user.uid, userName: name ,bgColor: bgColor });
+                navigation.navigate("Chat", { userID: result.user.uid, userName: name, bgColor: bgColor, isConnected: true });
                 Alert.alert(name + " signed in successfully!");
+            })
+            .catch(() => {
+                Alert.alert("Unable to sign in, try later again.");
+            })
+    }
+
+    const signInUserOffline = () => {
+        isConnected === false;
+
+        signInAnonymously(auth)
+            .then(result => {
+                navigation.navigate("Chat", { userID: result.user.uid, userName: name, bgColor: bgColor, isConnected: false });
+                Alert.alert(name + " signed in offline successfully!");
             })
             .catch(() => {
                 Alert.alert("Unable to sign in, try later again.");
@@ -49,6 +62,12 @@ const Start = ({ navigation }) => {
                             onPress={signInUser}
                         >
                             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 600 }}>Start Chat</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={signInUserOffline}
+                        >
+                            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 600 }}>Start Chat in Offline Mode</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
