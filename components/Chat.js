@@ -1,10 +1,12 @@
-import { StyleSheet, View, Text, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
-import { collection, addDoc, onSnapshot, query, where, orderBy } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, storage }) => {
 
     const [messages, setMessages] = useState([]);
 
@@ -36,6 +38,10 @@ const Chat = ({ route, navigation, db }) => {
         else return null;
     }
 
+    const renderCustomActions = (props) => {
+        return <CustomActions storage={storage} userID={userID} {...props} />;
+    }
+
     const addMessage = async (newMessage) => {
         const newMessageRef = await addDoc(collection(db, "messages"), newMessage);
         if (newMessageRef._id) {
@@ -43,6 +49,28 @@ const Chat = ({ route, navigation, db }) => {
         } else {
             Alert.alert("Unable to add. Please try later");
         }
+    }
+
+    const renderCustomView = (props) => {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }} />
+            );
+        }
+        return null;
     }
 
     const cacheMessages = async (messagesToCache) => {
@@ -101,6 +129,8 @@ const Chat = ({ route, navigation, db }) => {
                 messages={messages}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
                 onSend={messages => onSend(messages)}
                 user={{
                     _id: userID,
