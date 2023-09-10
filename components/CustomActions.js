@@ -2,26 +2,50 @@ import { TouchableOpacity, StyleSheet, View, Text, Alert } from "react-native";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
     const actionSheet = useActionSheet();
 
+    const uriToBlob = (uri) => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest()
+            xhr.onload = function () {
+                // return the blob
+                resolve(xhr.response)
+            }
+            xhr.onerror = function () {
+                reject(new Error('uriToBlob failed'))
+            }
+            xhr.responseType = 'blob'
+            xhr.open('GET', uri, true)
+
+            xhr.send(null)
+        })
+    }
+
     const pickImage = async () => {
         let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissions?.granted) {
+            console.log("test1");
             let result = await ImagePicker.launchImageLibraryAsync();
+            console.log("test2");
             if (!result.canceled) {
-                const imageURI = result.assets[0].uri;
-                const uniqueRefString = generateReference(imageURI);
-                const response = await fetch(imageURI);
-                const blob = await response.blob();
-                const newUploadRef = ref(storage, uniqueRefString);
-                uploadBytes(newUploadRef, blob).then(async (snapshot) => {
-                    console.log('file has been uploaded');
-                    const imageURL = await getDownloadURL(snapshot.ref)
-                    onSend({ image: imageURL })
-                });
+                try {
+                    const imageURI = result.assets[0].uri;
+                    const uniqueRefString = generateReference(imageURI);
+                    //const response = await fetch(imageURI);
+                    //const blob = await response.blob();
+                    const blob = await uriToBlob(imageURI);
+                    const newUploadRef = ref(storage, uniqueRefString);
+                    uploadBytesResumable(newUploadRef, blob).then(async (snapshot) => {
+                        console.log('file has been uploaded');
+                        const imageURL = await getDownloadURL(snapshot.ref)
+                        onSend({ image: imageURL })
+                    });
+                } catch (error) {
+                    console.log("Hello " + error);
+                }
             }
             else Alert.alert("Permissions haven't been granted.");
         }
@@ -69,7 +93,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
                         return;
                     case 2:
                         getLocation();
-                        default:
+                    default:
                 }
             },
         )
@@ -85,8 +109,9 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     const uploadAndSendImage = async (imageURI) => {
         const uniqueRefString = generateReference(imageURI);
         const newUploadRef = ref(storage, uniqueRefString);
-        const response = await fetch(imageURI);
-        const blob = await response.blob();
+        //const response = await fetch(imageURI);
+        //const blob = await response.blob();
+        const blob = await uriToBlob(imageURI);
         uploadBytes(newUploadRef, blob).then(async (snapshot) => {
             const imageURL = await getDownloadURL(snapshot.ref)
             onSend({ image: imageURL })
