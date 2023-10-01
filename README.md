@@ -1,8 +1,21 @@
-# Chatty
+<h1 align="center">Chatty</h1>
 
-A chat app for mobile devices built using React Native. The app will
+Start screen             |  Chat screen
+:-------------------------:|:-------------------------:
+![1000001714](https://github.com/Tristan-Lewis/Chatty/assets/94727522/9369886c-b24d-4784-81c7-671fe5d4ae3d)  |  ![1000001713](https://github.com/Tristan-Lewis/Chatty/assets/94727522/9582101d-3ad9-4395-81ef-f351ed29fa20)
+
+
+
+<p align="center">A chat app for mobile devices built using React Native. The app will
 provide users with a chat interface and options to share images and their
-location.
+location.</p>
+
+## Quick Start
+
+- Install dependencies
+- With the project open, run "expo start" in the terminal to start the server
+- Download the "Expo Go" app on your phone and set up a free account if you don't have one
+- Open your Expo Go app and open the project labelled "Navigator" and wait for the bundling to complete
 
 ## Dependencies
 - "@react-navigation/native": "^6.1.7",
